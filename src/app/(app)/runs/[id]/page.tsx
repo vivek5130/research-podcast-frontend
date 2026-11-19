@@ -11,6 +11,7 @@ import useSWR from "swr";
 import { EpisodeSkeleton } from "@/components/skeletons";
 
 import { EpisodePlayer } from "@/components/EpisodePlayer";
+import { QualityPanel } from "@/components/QualityPanel";
 import { RetryPanel } from "@/components/RetryPanel";
 import { RunTraces } from "@/components/RunTraces";
 import { Card, cx, ErrorNote, PageHeader, RunStatusBadge, SectionTitle } from "@/components/ui";
@@ -156,6 +157,8 @@ export default function RunPage() {
             </ul>
           </section>
         )}
+
+        <QualityPanel evaluation={out.evaluation} guardrails={out.guardrails} />
 
         <RunTraces runId={run.id} live={isActiveRun(run.status)} />
       </div>

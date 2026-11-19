@@ -23,6 +23,7 @@ import Link from "next/link";
 import useSWR from "swr";
 
 import { ActivityChart } from "@/components/dashboard/ActivityChart";
+import { InsightsPanel } from "@/components/dashboard/InsightsPanel";
 import { LatestEpisode } from "@/components/dashboard/LatestEpisode";
 import { RunList } from "@/components/RunList";
 import { useUser } from "@/components/SessionProvider";
@@ -242,6 +243,8 @@ export default function DashboardPage() {
               <ActivityChart runs={allRuns} />
             </div>
           </section>
+
+          <InsightsPanel />
         </div>
       )}
     </>

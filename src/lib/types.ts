@@ -125,6 +125,48 @@ export interface PodcastOutput {
   timings?: SentenceTiming[];
   voice?: string;
   language?: string;
+  guardrails?: Guardrails;
+  evaluation?: Evaluation;
+}
+
+/** What the guardrails removed or blocked in this run (PII types and counts, never the values). */
+export interface Guardrails {
+  topic_pii_removed?: string[];
+  script_pii_removed?: string[];
+  query_pii_redactions?: number;
+  source_pii_redactions?: number;
+  queries_blocked?: number;
+  injection_sentences_removed?: number;
+  ungrounded_sentences_removed?: number;
+  unsafe_sentences_removed?: number;
+  ungrounded_claims_kept?: number;
+}
+
+/** Per-episode quality metrics (ratios are 0-1; relevance is 1-5). */
+export interface Evaluation {
+  faithfulness?: number | null;
+  claims_checked?: number;
+  claims_supported?: number;
+  unsupported_claims?: string[];
+  relevance?: number | null;
+  relevance_reason?: string;
+  source_utilization?: number | null;
+  freshness?: number | null;
+  source_diversity?: number | null;
+  length_accuracy?: number | null;
+  duration_accuracy?: number | null;
+  word_count?: number;
+  target_words?: number;
+  duration_sec?: number;
+  target_duration_sec?: number;
+  judge_error?: string;
+  safety?: {
+    pii_redactions: number;
+    queries_blocked: number;
+    injections_removed?: number;
+    ungrounded_removed?: number;
+    unsafe_removed?: number;
+  };
 }
 
 /** When each sentence is spoken (seconds), for follow-along highlighting. */
@@ -179,4 +221,39 @@ export interface TraceSummary {
 export interface RunTraces {
   summary: TraceSummary;
   traces: Trace[];
+}
+
+/** GET /api/runs/insights: aggregates over the user's recent runs. */
+export interface Insights {
+  days: number;
+  runs: number;
+  quality: {
+    faithfulness: number | null;
+    relevance: number | null;
+    freshness: number | null;
+    source_diversity: number | null;
+    source_utilization: number | null;
+    length_accuracy: number | null;
+    duration_accuracy: number | null;
+    episodes_scored: number;
+    avg_sources: number | null;
+  };
+  reliability: {
+    completed: number;
+    failed: number;
+    in_progress: number;
+    success_rate: number | null;
+    manual_retries: number;
+    automatic_retries: number;
+    failure_reasons: { reason: string; count: number }[];
+  };
+  cost: { avg_tokens: number | null; avg_llm_calls: number | null; avg_seconds: number | null; total_tokens: number };
+  safety: {
+    pii_redactions: number;
+    queries_blocked: number;
+    injections_removed: number;
+    ungrounded_removed: number;
+    unsafe_removed: number;
+    policy_blocks: number;
+  };
 }
