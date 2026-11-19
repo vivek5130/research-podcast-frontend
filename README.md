@@ -15,7 +15,7 @@ Browser ──▶ Next.js (this app) ──/api/* rewrite──▶ FastAPI backe
 
 | Route | What it shows |
 |---|---|
-| `/` | Landing + sign-in (Google button; email dev sign-in when `NEXT_PUBLIC_ALLOW_DEV_LOGIN=true`) |
+| `/` | Landing + sign-in: Google button, or email + password (Sign in / Create account tabs) |
 | `/dashboard` | Schedules (run now, pause/resume), create form, recent episodes (polls while generating) |
 | `/schedulers/[id]` | Edit topic/time/timezone, run now, pause, delete, episode history |
 | `/runs/[id]` | Live progress (queued → research → audio → ready), audio player, sources, script. The email links here. |
