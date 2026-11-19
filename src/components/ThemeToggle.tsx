@@ -3,7 +3,7 @@
 /**
  * Light / dark / system theme switch. The choice is saved in localStorage and
  * applied as a `dark` class on <html> (the inline script in layout.tsx applies it
- * before first paint). "System" follows the OS setting live.
+ * before first paint). Dark is the default; "System" follows the OS setting live.
  */
 import { Monitor, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -22,11 +22,11 @@ function apply(theme: Theme) {
 }
 
 export function ThemeToggle({ compact = false }: { compact?: boolean }) {
-  const [theme, setTheme] = useState<Theme>("system");
+  const [theme, setTheme] = useState<Theme>("dark");
 
   useEffect(() => {
     try {
-      setTheme((localStorage.getItem("theme") as Theme) || "system");
+      setTheme((localStorage.getItem("theme") as Theme) || "dark");
     } catch {}
   }, []);
 

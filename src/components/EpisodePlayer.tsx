@@ -1,13 +1,13 @@
 "use client";
 
 /**
- * Audio player + script with live "follow along" highlighting.
+ * Audio player + script with live highlighting of the sentence being spoken.
  *
  * The backend stores sentence timings for each episode (exact per TTS chunk,
  * shared by length within a chunk). The sentence being spoken is highlighted,
  * past sentences stay readable, and clicking any sentence jumps the audio there.
- * Follow-along scrolling glides (eased) only when the line leaves the reading band,
- * and pauses while the reader scrolls themselves ("Resume follow-along" brings it back).
+ * The script scrolls along (eased) only when the line leaves the reading band, and
+ * pauses while the reader scrolls themselves ("Back to current line" brings it back).
  * Older episodes without timings fall back to an estimate from text length.
  */
 import { Check, Copy, Download, Pause, Play } from "lucide-react";
@@ -101,7 +101,6 @@ export function EpisodePlayer({
   const activeRef = useRef<HTMLSpanElement>(null);
   const [time, setTime] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const [follow, setFollow] = useState(true);
   const [copied, setCopied] = useState(false);
   const [length, setLength] = useState(duration ?? 0);
 
@@ -120,13 +119,13 @@ export function EpisodePlayer({
     return () => cancelAnimationFrame(raf);
   }, [playing]);
 
-  // Follow-along scrolling: glide only when the spoken sentence leaves a comfortable
+  // Auto-scroll: glide only when the spoken sentence leaves a comfortable
   // reading band, and step aside while the reader scrolls on their own.
   const [userScrolled, setUserScrolled] = useState(false);
-  const following = follow && playing && !userScrolled;
+  const following = playing && !userScrolled;
 
   useEffect(() => {
-    if (!playing || !follow) return;
+    if (!playing) return;
     const pause = () => setUserScrolled(true);
     const onKey = (e: KeyboardEvent) => {
       if (["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "].includes(e.key) && e.target === document.body) pause();
@@ -139,7 +138,7 @@ export function EpisodePlayer({
       window.removeEventListener("touchmove", pause);
       window.removeEventListener("keydown", onKey);
     };
-  }, [playing, follow]);
+  }, [playing]);
 
   useEffect(() => {
     if (following && activeRef.current) glideIntoView(activeRef.current);
@@ -221,12 +220,6 @@ export function EpisodePlayer({
           <SectionTitle
             action={
               <div className="flex items-center gap-1">
-                {audioUrl && (
-                  <label className="mr-2 inline-flex cursor-pointer items-center gap-2 text-sm text-muted">
-                    <input type="checkbox" checked={follow} onChange={(e) => setFollow(e.target.checked)} className="size-4 accent-[var(--accent)]" />
-                    Follow along
-                  </label>
-                )}
                 <Button
                   size="sm"
                   variant="ghost"
@@ -272,13 +265,13 @@ export function EpisodePlayer({
             </div>
           </Card>
           {audioUrl && <p className="mt-2 text-xs text-subtle">Tip: click any sentence to play from there.</p>}
-          {follow && playing && userScrolled && (
+          {playing && userScrolled && (
             <button
               type="button"
               onClick={resumeFollow}
               className="fixed bottom-6 left-1/2 z-20 -translate-x-1/2 cursor-pointer rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background shadow-card transition-opacity duration-300 hover:opacity-90"
             >
-              Resume follow-along
+              Back to current line
             </button>
           )}
         </section>

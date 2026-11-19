@@ -14,21 +14,19 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
-  ],
+  themeColor: "#0a0a0a", // dark is the default theme
 };
 
 /**
- * Runs before first paint: applies the saved theme ("light" | "dark" | "system")
- * so there is no flash of the wrong theme. Must stay tiny and dependency-free.
+ * Runs before first paint: applies the saved theme ("light" | "dark" | "system"),
+ * defaulting to dark, so there is no flash of the wrong theme. <html> is also rendered
+ * with the `dark` class, so dark shows even before this runs. Keep it tiny and dependency-free.
  */
-const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem("theme")||"system";var d=t==="dark"||(t==="system"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.classList.toggle("dark",d);}catch(e){}})();`;
+const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem("theme")||"dark";var d=t==="dark"||(t==="system"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.classList.toggle("dark",d);}catch(e){}})();`;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>

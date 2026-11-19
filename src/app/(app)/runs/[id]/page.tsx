@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Episode page: live progress while generating, then the follow-along player
+ * Episode page: live progress while generating, then the player with live script highlighting
  * (audio + highlighted script), sources and telemetry. This is the page the
  * "podcast ready" email links to.
  */
