@@ -1,6 +1,9 @@
 # DailyCast Frontend (Next.js)
 
 Next.js 15 (App Router) + Tailwind CSS v4 + SWR. Users sign in with Google, create daily podcast schedules, trigger runs, and listen to episodes.
+<img width="1893" height="931" alt="image" src="https://github.com/user-attachments/assets/e2bf3afb-4956-4fa4-a4b5-66b052ebd064" />
+
+<img width="1899" height="820" alt="image" src="https://github.com/user-attachments/assets/df9be17b-094b-4dbe-a11b-65983022b38b" />
 
 ## How it talks to the backend
 
