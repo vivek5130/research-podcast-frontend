@@ -120,6 +120,8 @@ export interface PodcastOutput {
   duration_sec?: number;
   audio_format?: string;
   audio_url?: string | null;
+  /** Why the audio link couldn't be created (storage problem); the script is still shown. */
+  audio_error?: string | null;
   timings?: SentenceTiming[];
   voice?: string;
   language?: string;

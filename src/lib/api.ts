@@ -19,26 +19,50 @@ import type {
   VoiceCatalog,
 } from "./types";
 
+/**
+ * An error response from the API: `{ detail, code, request_id }`.
+ *
+ * For server-side failures (5xx) the message ends with `[CODE · ref <request_id>]`,
+ * so anyone looking at the UI can quote it and the request can be found in the
+ * Vercel logs (`request=<request_id>`) in one search.
+ */
 export class ApiError extends Error {
-  constructor(public status: number, message: string) {
+  constructor(
+    public status: number,
+    message: string,
+    public code?: string,
+    public requestId?: string,
+  ) {
     super(message);
+    this.name = "ApiError";
   }
 }
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const res = await fetch(path, {
-    ...init,
-    credentials: "same-origin",
-    headers: { "Content-Type": "application/json", ...(init.headers ?? {}) },
-  });
+  let res: Response;
+  try {
+    res = await fetch(path, {
+      ...init,
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json", ...(init.headers ?? {}) },
+    });
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") throw err;
+    throw new ApiError(0, "Can't reach the server. Check your connection and try again.", "NETWORK_ERROR");
+  }
   if (res.status === 204) return undefined as T;
   const body = await res.json().catch(() => null);
   if (!res.ok) {
     const detail = body?.detail;
-    const message = Array.isArray(detail)
+    const code: string | undefined = body?.code;
+    const requestId: string | undefined = body?.request_id ?? res.headers.get("x-request-id") ?? undefined;
+    let message = Array.isArray(detail)
       ? detail.map((d: { msg: string }) => d.msg).join("; ") // FastAPI validation errors
-      : (detail ?? `Request failed (${res.status})`);
-    throw new ApiError(res.status, message);
+      : (detail ?? `Request failed (HTTP ${res.status})`);
+    if (res.status >= 500) {
+      message += ` [${code ?? `HTTP_${res.status}`}${requestId ? ` · ref ${requestId}` : ""}]`;
+    }
+    throw new ApiError(res.status, message, code, requestId);
   }
   return body as T;
 }

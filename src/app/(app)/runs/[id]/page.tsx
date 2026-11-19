@@ -113,6 +113,7 @@ export default function RunPage() {
           </Card>
         )}
 
+        {out.audio_error && <ErrorNote message={`Audio unavailable: ${out.audio_error}`} />}
         {(out.audio_url || out.script) && (
           <EpisodePlayer
             audioUrl={out.audio_url}
