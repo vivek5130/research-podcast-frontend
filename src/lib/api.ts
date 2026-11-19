@@ -73,6 +73,10 @@ export const api = {
   // ---- auth ----
   signInWithGoogle: (credential: string) =>
     request<Session>("/api/auth/signin/google", { method: "POST", body: json({ credential }) }),
+  signUp: (email: string, password: string, name?: string) =>
+    request<Session>("/api/auth/signup", { method: "POST", body: json({ email, password, name }) }),
+  signInWithPassword: (email: string, password: string) =>
+    request<Session>("/api/auth/signin/password", { method: "POST", body: json({ email, password }) }),
   signInDev: (email: string, name?: string) =>
     request<Session>("/api/auth/signin/dev", { method: "POST", body: json({ email, name }) }),
   signOut: () => request<void>("/api/auth/signout", { method: "POST" }),

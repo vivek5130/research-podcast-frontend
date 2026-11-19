@@ -188,15 +188,14 @@ export function EmptyState({ icon, title, children, action }: { icon?: ReactNode
 
 const fieldBase =
   "w-full rounded-lg border bg-surface px-3 text-[15px] text-foreground placeholder:text-subtle transition-colors " +
-  "focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/20 disabled:opacity-60";
+  "focus:outline-none focus:ring-3 disabled:opacity-60";
+// Exactly one of these is applied, so the error (red) and focus (green) borders never compete.
+const fieldTone = (invalid?: boolean) =>
+  invalid ? "border-danger focus:border-danger focus:ring-danger/20" : "border-border-strong focus:border-ring focus:ring-ring/20";
 
 export function Input({ invalid, className, ...props }: InputHTMLAttributes<HTMLInputElement> & { invalid?: boolean }) {
   return (
-    <input
-      {...props}
-      aria-invalid={invalid || undefined}
-      className={cx(fieldBase, "h-11", invalid ? "border-danger focus:border-danger focus:ring-danger/20" : "border-border-strong", className)}
-    />
+    <input {...props} aria-invalid={invalid || undefined} className={cx(fieldBase, "h-11", fieldTone(invalid), className)} />
   );
 }
 
@@ -205,13 +204,13 @@ export function Textarea({ invalid, className, ...props }: TextareaHTMLAttribute
     <textarea
       {...props}
       aria-invalid={invalid || undefined}
-      className={cx(fieldBase, "min-h-28 resize-y py-2.5", invalid ? "border-danger focus:border-danger focus:ring-danger/20" : "border-border-strong", className)}
+      className={cx(fieldBase, "min-h-28 resize-y py-2.5", fieldTone(invalid), className)}
     />
   );
 }
 
 export function Select({ className, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
-  return <select {...props} className={cx(fieldBase, "h-11 cursor-pointer border-border-strong", className)} />;
+  return <select {...props} className={cx(fieldBase, "h-11 cursor-pointer", fieldTone(false), className)} />;
 }
 
 /** Label + control + helper/error text, wired with ids for screen readers. */
